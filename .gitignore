@@ -34,3 +34,6 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+# glide vendor
+vendor/

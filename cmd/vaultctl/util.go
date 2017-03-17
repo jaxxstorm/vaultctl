@@ -22,57 +22,9 @@ import (
 	"github.com/UKHomeOffice/vaultctl/pkg/utils"
 	"github.com/UKHomeOffice/vaultctl/pkg/vault"
 
-	log "github.com/Sirupsen/logrus"
+	//log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
-	"k8s.io/kubernetes/pkg/client/unversioned"
-	"k8s.io/kubernetes/pkg/client/unversioned/clientcmd"
 )
-
-// getKubeClient retrieves a kube client
-func getKubeClient(cx *cli.Context) (*unversioned.Client, error) {
-	filename := cx.String("kubeconfig")
-	context := cx.String("kube-context")
-	hostname := cx.String("kube-server")
-	token := cx.String("kube-token")
-
-	config := new(unversioned.Config)
-
-	// step: are we using a kubeconfig?
-	if filename != "" {
-		log.Infof("loading the kubeconfig from: %s, context: %s, server: %s", filename, context, hostname)
-
-		kube, err := clientcmd.LoadFromFile(filename)
-		if err != nil {
-			return nil, err
-		}
-
-		if config, err = clientcmd.NewDefaultClientConfig(*kube,
-			&clientcmd.ConfigOverrides{
-				CurrentContext: context,
-			},
-		).ClientConfig(); err != nil {
-			return nil, err
-		}
-
-		if hostname != "" {
-			config.Host = hostname
-		}
-	} else {
-		config.BearerToken = token
-		config.Host = hostname
-		config.Insecure = true
-	}
-
-	log.Infof("using the kube api: %s", config.Host)
-
-	// step: create the client
-	client, err := unversioned.New(config)
-	if err != nil {
-		return nil, err
-	}
-
-	return client, nil
-}
 
 // parseConfigFiles reads a series of configuration files or directories and extracts the items from them
 func parseConfigFiles(files []string) (*resources, error) {
